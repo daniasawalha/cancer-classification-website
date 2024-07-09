@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Image</title>
+    <style>
+        body {
+            background: rgb(2, 0, 36);
+            background: linear-gradient(90deg, rgba(2, 0, 36, 1) 0%, rgba(0, 212, 255, 1) 54%);
+            color: #FFFFFF;
+            font-family: Georgia, serif;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .button-64 {
+            align-items: center;
+            background-image: linear-gradient(144deg, #d1fff4, #f4d1ff 50%, #ffd1f3);
+            border: 0;
+            border-radius: 8px;
+            box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px;
+            box-sizing: border-box;
+            color: #FFFFFF;
+            display: flex;
+            font-family: Phantomsans, sans-serif;
+            font-size: 20px;
+            justify-content: center;
+            line-height: 1em;
+            max-width: 100%;
+            min-width: 140px;
+            padding: 3px;
+            text-decoration: none;
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: manipulation;
+            white-space: nowrap;
+            cursor: pointer;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .button-64:active,
+        .button-64:hover {
+            outline: 0;
+        }
+
+        .button-64 span {
+            background-color: rgb(5, 6, 45);
+            padding: 16px 24px;
+            border-radius: 6px;
+            width: 100%;
+            height: 100%;
+            transition: 300ms;
+        }
+
+        .button-64:hover span {
+            background: none;
+        }
+
+        @media (min-width: 768px) {
+            .button-64 {
+                font-size: 24px;
+                min-width: 196px;
+            }
+        }
+
+        .file-input-container {
+            display: inline-block;
+            position: relative;
+        }
+
+        .file-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .image-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .image-item {
+            margin: 10px;
+            text-align: center;
+        }
+
+        .image-item img {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+        }
+
+        .image-item h3 {
+            margin-top: 5px;
+        }
+
+        .image-preview {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .image-preview img {
+            width: 300px;
+            height: 300px;
+            border: 2px solid #fff;
+            border-radius: 8px;
+        }
+
+        .prediction {
+            color: yellow;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Image for Prediction</h1>
+    <form id="uploadForm" action="/insert_img" method="post" enctype="multipart/form-data">
+        <div class="file-input-container">
+            <button class="button-64" role="button"><span class="text">Choose File</span></button>
+            <input type="file" name="file" class="file-input" id="fileInput" onchange="previewImage(event)">
+        </div>
+        <button class="button-64" role="button"><span class="text">predict</span></button>
+    </form>
+    <a href="/list_imgs">
+        <button class="button-64" role="button"><span class="text">List of Images</span></button>
+    </a>
+
+    <div class="prediction" id="prediction">
+        {% if predicted_label %}
+            <h2>Prediction:{{ predicted_label }}</h2>
+        {% endif %}
+    </div>
+
+    <div class="image-preview" id="imagePreview">
+        <img id="previewImg" src="#" alt="Image Preview">
+    </div>
+
+    {% if img_data %}
+    <div class="image-container">
+        <div class="image-item">
+            <img src="data:image/jpeg;base64,{{ img_data }}" alt="Uploaded Image">
+        </div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <p style="color: red;">{{ error }}</p>
+    {% endif %}
+
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('previewImg');
+                output.src = reader.result;
+                document.getElementById('imagePreview').style.display = 'block';
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+</body>
+</html>
